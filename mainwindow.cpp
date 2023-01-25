@@ -55,11 +55,30 @@ void MainWindow::on_startBtn_clicked()
 
 int MainWindow::startReadAndParse(const QString &fileName)
 {
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical() << "Не удалось открыть файл!";
+        ui->statusbar->showMessage("Не удалось открыть файл!");
+        return 1;
+    }
+    QFileInfo info;
+    info.setFile(file);
+    QSettings settings(ORGANIZATION_NAME, APP_NAME);
+    settings.setValue(LST_DIR, info.filePath());
+    QString fileData = file.readAll();
+    file.close();
+    QStringList urlLst = fileData.split("\n");
 
+    for(int i = 0; i < urlLst.count(); i++) {
+        qDebug() << urlLst.at(i);
+    }
+    return 0;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
+
     QSettings settings(ORGANIZATION_NAME, APP_NAME);
 
     settings.setValue(URL_LINE, ui->urlLine->text());
@@ -75,20 +94,5 @@ void MainWindow::on_choiceFileBtn_clicked()
 
 void MainWindow::on_startFileBtn_clicked()
 {
-    QFile file(ui->fullFilePath->text());
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical() << "Не удалось открыть файл!";
-        ui->statusbar->showMessage("Не удалось открыть файл!");
-    }
-    QFileInfo info;
-    info.setFile(file);
-    QSettings settings(ORGANIZATION_NAME, APP_NAME);
-    settings.setValue(LST_DIR, info.filePath());
-    QString fileData = file.readAll();
-    file.close();
-    QStringList urlLst = fileData.split("\n");
-
-    for(int i = 0; i < urlLst.count(); i++) {
-        qDebug() << urlLst.at(i);
-    }
+    startReadAndParse(ui->fullFilePath->text());
 }

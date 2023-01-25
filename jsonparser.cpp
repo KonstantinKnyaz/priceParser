@@ -4,6 +4,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QMutex>
+#include <QMutexLocker>
 
 JsonParser::JsonParser()
 {
@@ -26,6 +28,9 @@ int JsonParser::startParse(QString &strJson)
 
 int JsonParser::startParse(QJsonDocument &doc)
 {
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
     if(!doc.isObject()) {
         qCritical() << "Входные данные не являются JSON'ом";
         return 1;
