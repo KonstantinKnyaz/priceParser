@@ -71,6 +71,8 @@ int MainWindow::startReadAndParse(const QString &fileName)
 
     for(int i = 0; i < urlLst.count(); i++) {
         qDebug() << urlLst.at(i);
+        QUrl url(urlLst.at(i));
+        dwnlManager->startDownload(url);
     }
     return 0;
 }
