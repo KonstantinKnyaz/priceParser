@@ -15,6 +15,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+VERSION = 0.2
+QMAKE_TARGET_COPYRIGHT = Konstantin Knyazev
+
 SOURCES += \
     downloader.cpp \
     jsonparser.cpp \
@@ -28,6 +31,12 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui
+
+win32: RC_ICONS = res/appicon.ico
+
+#RC_FILE += resources.rc
+#OTHER_FILES += resources.rc
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

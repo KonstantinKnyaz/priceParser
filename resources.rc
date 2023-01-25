@@ -1,0 +1,8 @@
+IDI_ICON1               ICON                    "appicon.ico"
+
+#include <windows.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 	0,2
+PRODUCTVERSION 	0,2
+
