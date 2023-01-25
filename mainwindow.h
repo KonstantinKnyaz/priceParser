@@ -8,6 +8,8 @@
 
 #include "downloader.h"
 
+#define ORGANIZATION_NAME "KostyanTeam"
+#define APP_NAME "UrlJsonParser"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,9 +26,21 @@ public:
 private slots:
     void on_startBtn_clicked();
 
+    void on_choiceFileBtn_clicked();
+
+    void on_startFileBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     downloader *dwnlManager = Q_NULLPTR;
+
+    QString lastDir;
+
+    int startReadAndParse(const QString &fileName);
+
+    // QWidget interface
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 #endif // MAINWINDOW_H
