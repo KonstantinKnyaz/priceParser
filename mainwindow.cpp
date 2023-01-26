@@ -55,6 +55,9 @@ MainWindow::~MainWindow()
 void MainWindow::on_startBtn_clicked()
 {
     fullPathToSave = pathToSave;
+    if(!fullPathToSave.isNull())
+        fullPathToSave.append("/");
+    fullPathToSave.append(QString("Result_%1.txt").arg(QDate::currentDate().toString("dd.MM.yy")));
     QUrl url(ui->urlLine->text());
     dwnlManager->startDownload(url);
 }
