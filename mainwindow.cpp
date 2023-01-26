@@ -6,10 +6,12 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QSettings>
+#include <QMessageBox>
 
 #define URL_LINE    "URL_L"
 #define FILE_NAME   "FILE_L"
 #define LST_DIR     "DIR"
+#define LST_PATH    "PATH"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->urlLine->setText(settings.value(URL_LINE, "").toString());
     ui->fullFilePath->setText(settings.value(FILE_NAME, "").toString());
     lastDir = settings.value(LST_DIR, "").toString();
+    pathToSave = settings.value(LST_PATH, "").toString();
 
     qDebug() << lastDir;
 
@@ -31,12 +34,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     dwnlManager->connect(dwnlManager, &downloader::downloaded, [this]() {
         QString str = QString::fromStdString(dwnlManager->getData().toStdString());
-        JsonParser parser;
+        JsonParser parser(fullPathToSave);
         int res = parser.startParse(str);
         if(!res) {
 //            qDebug() << parser.getFilePath();
+            ui->statusbar->showMessage("Парсинг успешно завершился");
         } else {
 //            qWarning() << "Парсинг завершился с ошибкой:" << res;
+            ui->statusbar->showMessage("Парсинг завершился с ошибкой");
         }
     });
 }
@@ -49,6 +54,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_startBtn_clicked()
 {
+    fullPathToSave = pathToSave;
     QUrl url(ui->urlLine->text());
     dwnlManager->startDownload(url);
 }
@@ -68,6 +74,26 @@ int MainWindow::startReadAndParse(const QString &fileName)
     QString fileData = file.readAll();
     file.close();
     QStringList urlLst = fileData.split("\n");
+
+    fullPathToSave = pathToSave;
+
+    if(!fullPathToSave.isNull())
+        fullPathToSave.append("/");
+    fullPathToSave.append(QString("Result_%1.txt").arg(QDate::currentDate().toString("dd.MM.yy")));
+
+    if(QFile::exists(fullPathToSave)) {
+        QMessageBox msgBox;
+        msgBox.setText("Внимание");
+        msgBox.setInformativeText("Файл уже существует\nПерезаписать?");
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setIcon(QMessageBox::Warning);
+        int res = msgBox.exec();
+        if(res == QMessageBox::No)
+            return FILE_ERROR;
+        else if (QMessageBox::Yes) {
+            QFile::remove(fullPathToSave);
+        }
+    }
 
     for(int i = 0; i < urlLst.count(); i++) {
         qDebug() << urlLst.at(i);
@@ -97,4 +123,19 @@ void MainWindow::on_choiceFileBtn_clicked()
 void MainWindow::on_startFileBtn_clicked()
 {
     startReadAndParse(ui->fullFilePath->text());
+}
+
+void MainWindow::on_pathToSave_triggered()
+{
+    QString pathLst = pathToSave;
+    pathToSave = QFileDialog::getExistingDirectory(this, "Выберите папку", pathToSave);
+    if(pathToSave.isEmpty())
+        pathToSave = pathLst;
+    QSettings settings(ORGANIZATION_NAME, APP_NAME);
+    settings.setValue(LST_PATH, pathToSave);
+}
+
+void MainWindow::on_quit_triggered()
+{
+    this->close();
 }

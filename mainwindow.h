@@ -30,12 +30,20 @@ private slots:
 
     void on_startFileBtn_clicked();
 
+    void on_pathToSave_triggered();
+
+    void on_quit_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     downloader *dwnlManager = Q_NULLPTR;
 
     QString lastDir;
+
+    QString pathToSave = Q_NULLPTR;
+
+    QString fullPathToSave;
 
     int startReadAndParse(const QString &fileName);
 
