@@ -45,6 +45,7 @@ int JsonParser::startParse(QJsonDocument &doc)
     }
 
     QJsonObject json = doc.object();
+    QString fiscal = json["fiscalDriveNumber"].toString();
     QJsonArray array = json["items"].toArray();
     QString fileName = json["dateTime"].toString();
 
@@ -69,17 +70,13 @@ int JsonParser::startParse(QJsonDocument &doc)
         QJsonObject obj = array.at(i).toObject();
         QString name = obj["name"].toString();
         int price = obj["price"].toInt();
-        int col = obj["quantity"].toInt();
+        double col = obj["quantity"].toDouble();
 
 //        qDebug() << "Продукт:" << name << "\nЦена:" << price;
 
-        stream << QString("Продукт: %1 ").arg(name) << "|" << QString(" Цена: %1 ").arg(price)
-               << "|" << QString("Количество: %1\n").arg(col);
-//        stream << "--------------------------------- \n";
+        stream << fiscal << "|" << adress << "|" << name << "|" << price
+               << "|" << col << "\n";
     }
-
-    if(!adress.isEmpty())
-        stream << QString("Адрес: %1\n\n\n").arg(adress);
 
     file.close();
     mutex.unlock();
