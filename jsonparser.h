@@ -12,6 +12,11 @@ enum ERRORS {
     JSON_ERROR =    0x3
 };
 
+enum PARSEMODE {
+    TXT     =   0x0,
+    XLSX    =   0x1,
+};
+
 class JsonParser : public QObject
 {
 public:
@@ -19,9 +24,9 @@ public:
 
     ~JsonParser();
 
-    int startParse(QString &strJson);
+    int startParse(QString &strJson, PARSEMODE mode = TXT);
 
-    int startParse(QJsonDocument &doc);
+    int startParse(QJsonDocument &doc, PARSEMODE mode = TXT);
 
     QString getFilePath();
 

@@ -33,14 +33,21 @@ MainWindow::MainWindow(QWidget *parent)
     dwnlManager = new downloader(this);
 
     dwnlManager->connect(dwnlManager, &downloader::downloaded, [this](const QByteArray data) {
+
         QString str = QString::fromStdString(data.toStdString());
         JsonParser parser(fullPathToSave);
-        int res = parser.startParse(str);
+        int res = 0;
+
+        if(ui->radioTXT->isChecked())
+            res = parser.startParse(str);
+        else if (ui->radioXLSX->isChecked())
+            res = parser.startParse(str, PARSEMODE::XLSX);
+
         if(!res) {
-//            qDebug() << parser.getFilePath();
+            //            qDebug() << parser.getFilePath();
             ui->statusbar->showMessage("Парсинг успешно завершился");
         } else {
-//            qWarning() << "Парсинг завершился с ошибкой:" << res;
+            //            qWarning() << "Парсинг завершился с ошибкой:" << res;
             ui->statusbar->showMessage("Парсинг завершился с ошибкой");
         }
     });
@@ -57,7 +64,12 @@ void MainWindow::on_startBtn_clicked()
     fullPathToSave = pathToSave;
     if(!fullPathToSave.isNull())
         fullPathToSave.append("/");
-    fullPathToSave.append(QString("Result_%1.txt").arg(QDate::currentDate().toString("dd.MM.yy")));
+
+    if(ui->radioTXT->isChecked())
+        fullPathToSave.append(QString("Result_%1.txt").arg(QDate::currentDate().toString("dd.MM.yy")));
+    else
+        fullPathToSave.append(QString("Result_%1.xlsx").arg(QDate::currentDate().toString("dd.MM.yy")));
+
     QUrl url(ui->urlLine->text());
     dwnlManager->startDownload(url);
 }
@@ -82,7 +94,11 @@ int MainWindow::startReadAndParse(const QString &fileName)
 
     if(!fullPathToSave.isNull())
         fullPathToSave.append("/");
-    fullPathToSave.append(QString("Result_%1.txt").arg(QDate::currentDate().toString("dd.MM.yy")));
+
+    if(ui->radioTXT->isChecked())
+        fullPathToSave.append(QString("Result_%1.txt").arg(QDate::currentDate().toString("dd.MM.yy")));
+    else
+        fullPathToSave.append(QString("Result_%1.xlsx").arg(QDate::currentDate().toString("dd.MM.yy")));
 
     if(QFile::exists(fullPathToSave)) {
         QMessageBox msgBox;
