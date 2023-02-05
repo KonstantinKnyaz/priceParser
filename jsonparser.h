@@ -28,7 +28,6 @@ public:
 private:
     QString pathToSave;
     QMutex mutex;
-
 };
 
 #endif // JSONPARSER_H

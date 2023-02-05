@@ -66,6 +66,10 @@ int JsonParser::startParse(QJsonDocument &doc)
 
     QByteArray inputData = file.readAll();
 
+#ifdef QT_DEBUG
+      stream << "------------------------\n";
+#endif
+
     for(int i = 0; i < array.count(); i++) {
         QJsonObject obj = array.at(i).toObject();
         QString name = obj["name"].toString();
