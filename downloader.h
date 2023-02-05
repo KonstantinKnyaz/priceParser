@@ -5,6 +5,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QMutex>
 
 class downloader : public QObject
 {
@@ -18,7 +19,7 @@ public:
     QByteArray getData();
 
 signals:
-    void downloaded();
+    void downloaded(const QByteArray data);
 
 private slots:
     void  fileDownloaded(QNetworkReply *rpl);
@@ -26,6 +27,7 @@ private slots:
 private:
     QNetworkAccessManager m_network;
     QByteArray m_downloadedData;
+    QMutex mutex;
 
 };
 

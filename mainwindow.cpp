@@ -32,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     dwnlManager = new downloader(this);
 
-    dwnlManager->connect(dwnlManager, &downloader::downloaded, [this]() {
-        QString str = QString::fromStdString(dwnlManager->getData().toStdString());
+    dwnlManager->connect(dwnlManager, &downloader::downloaded, [this](const QByteArray data) {
+        QString str = QString::fromStdString(data.toStdString());
         JsonParser parser(fullPathToSave);
         int res = parser.startParse(str);
         if(!res) {

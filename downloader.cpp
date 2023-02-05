@@ -12,17 +12,17 @@ downloader::~downloader()
 
 void downloader::startDownload(QUrl url)
 {
-   QNetworkRequest request;
+    QNetworkRequest request;
 
-   QSslConfiguration sSlConfig;
-   sSlConfig.setDefaultConfiguration(QSslConfiguration::defaultConfiguration());
-   sSlConfig.setProtocol(QSsl::TlsV1_2);
+    QSslConfiguration sSlConfig;
+    sSlConfig.setDefaultConfiguration(QSslConfiguration::defaultConfiguration());
+    sSlConfig.setProtocol(QSsl::TlsV1_2);
 
-   request.setSslConfiguration(sSlConfig);
-   request.setUrl(url);
-   m_network.get(request);
+    request.setSslConfiguration(sSlConfig);
+    request.setUrl(url);
+    m_network.get(request);
 
-   qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
+    qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
 
 }
 
@@ -33,7 +33,9 @@ QByteArray downloader::getData()
 
 void downloader::fileDownloaded(QNetworkReply *rpl)
 {
-    m_downloadedData = rpl->readAll();
-    rpl->deleteLater();
-    emit downloaded();
+    if(rpl->error() == QNetworkReply::NoError) {
+        m_downloadedData = rpl->readAll();
+        rpl->deleteLater();
+        emit downloaded(m_downloadedData);
+    }
 }

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QJsonDocument>
+#include <QMutex>
 
 enum ERRORS {
     NO_ERROR =      0x0,
@@ -26,6 +27,7 @@ public:
 
 private:
     QString pathToSave;
+    QMutex mutex;
 
 };
 

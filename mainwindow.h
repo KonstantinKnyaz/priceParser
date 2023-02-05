@@ -47,6 +47,8 @@ private:
 
     int startReadAndParse(const QString &fileName);
 
+    int col = 0;
+
     // QWidget interface
 protected:
     void closeEvent(QCloseEvent *event);
